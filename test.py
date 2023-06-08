@@ -60,3 +60,12 @@ print()
 
 #%%
 
+#print(np.kron(1, pauli_X))
+#print(np.matmul(sim.pauli_Xi(2, 1), up_up))
+
+Z1 = sim.pauli_Zi(2, 0)
+Z2 = sim.pauli_Zi(2, 1)
+Z1Z2 = np.matmul(Z1, Z2)
+
+print(np.matmul(Z1Z2, up_up))
+

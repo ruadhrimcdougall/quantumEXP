@@ -32,7 +32,32 @@ class State:
         self.__up = np.array([1, 0])
         self.__down = np.array([0, 1])
 
-def pauli_Z(order):
-    pass
+
+def pauli_Xi(qubits, i):
+    if i<0 or i>=qubits:
+        raise ValueError('i must take integer values between 0 (for the first qubit) up to qubits-1')
+    elif isinstance(i, int) == 0:
+        raise TypeError('i must be an integer')
+    X = 1
+    for q in range(qubits):
+        if q == i:
+            X = np.kron(X, pauli_X)
+        else:
+            X = np.kron(X, np.identity(2))
+    return X
+
+def pauli_Zi(qubits, i):
+    if i<0 or i>=qubits:
+        raise ValueError('i must take integer values between 0 (for the first qubit) up to qubits-1')
+    elif isinstance(i, int) == 0:
+        raise TypeError('i must be an integer')
+    Z = 1
+    for q in range(qubits):
+        if q == i:
+            Z = np.kron(Z, pauli_Z)
+        else:
+            Z = np.kron(Z, np.identity(2))
+    return Z
+        
         
 
