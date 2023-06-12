@@ -22,7 +22,13 @@ class Hamiltonian:
         self.__x = x
         if form =='ising1d':
             self.hamiltonian = self.ising_hamiltonian()
-    
+        self.ground_state = self.find_ground_state()
+        self.exp_ground = np.matmul(self.ground_state.conj().T, 
+                                    np.matmul(self.hamiltonian, 
+                                              self.ground_state)
+                                    )
+        print(self.exp_ground)
+        
     def ising_hamiltonian(self):
         Z_term = 0
         X_term = 0
@@ -63,6 +69,12 @@ class Hamiltonian:
             else:
                 Z = np.kron(Z, np.identity(2))
         return Z
+    
+    def find_ground_state(self):
+        vals, vecs = np.linalg.eig(self.hamiltonian)
+        lowest_ind = np.where(vals == vals.min())
+        min_energy_state = vecs[:,lowest_ind].flatten()
+        return min_energy_state
         
 
 class State:

@@ -72,6 +72,15 @@ print(up_up.shape)
 
 #%% testing hamiltonian method
 
-h1 = sim.Hamiltonian(2, 1)
-print(h1.hamiltonian)
+h1 = sim.Hamiltonian(3, 1)
+#print(h1.hamiltonian)
+test_hamiltonian = h1.hamiltonian
 
+
+#%% Testing ground state
+
+ground = h1.ground_state
+#print(ground)
+
+exp_ground = np.matmul(ground.conj().T, np.matmul(test_hamiltonian, ground))
+print(exp_ground)
