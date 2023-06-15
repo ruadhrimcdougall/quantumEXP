@@ -27,7 +27,6 @@ class Hamiltonian:
                                     np.matmul(self.hamiltonian, 
                                               self.ground_state)
                                     )
-        print(self.exp_ground)
         
     def ising_hamiltonian(self):
         Z_term = 0
@@ -73,6 +72,10 @@ class Hamiltonian:
     def find_ground_state(self):
         vals, vecs = np.linalg.eig(self.hamiltonian)
         lowest_ind = np.where(vals == vals.min())
+        #mask = vals > 0
+        #pos_vals = vals[mask]
+        #min_pos_val = np.argmin(pos_vals)
+        #lowest_ind = np.nonzero(mask)[0][min_pos_val]
         min_energy_state = vecs[:,lowest_ind].flatten()
         return min_energy_state
         
