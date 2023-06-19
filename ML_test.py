@@ -18,27 +18,38 @@ sns.set_context('paper', font_scale=1.5)
 sns.set_palette('winter')
 #plt.style.use('bmh')
 
+errors_lst = []
+pts_lst = []
+
 #%% Create hamiltonians for different values of x, and plot epectation of ground
 # state energy as a function of this variable
 
 # Two qubits first
-data_pts = 50
+data_pts = int(1e2)
 g_vals = np.linspace(-2, 2, data_pts)
-q_bits = 5
+q_bits = 10
 E0 = []
-training_data = np.zeros((data_pts*5, 2))
+training_data = np.zeros((data_pts, 2))
 
-for q in range(q_bits):
+#for q in range(q_bits):
     #training_data[:(data_pts*(q+1)-1), 0] = q+1
     #print(data_pts*(q+1))
     #print(q+1)
-    for i in range(len(g_vals)):
-        new_hamiltonian = sim.Hamiltonian(q+1, g_vals[i])
-        exp_min_energy = new_hamiltonian.exp_ground
-        E0.append(exp_min_energy)
-        training_data[q*data_pts + i, 0] = q+1
-        training_data[q*data_pts + i, 1] = g_vals[i]
+#    for i in range(len(g_vals)):
+#        new_hamiltonian = sim.Hamiltonian(q+1, g_vals[i])
+#        exp_min_energy = new_hamiltonian.exp_ground
+#        E0.append(exp_min_energy)
+#        training_data[q*data_pts + i, 0] = q+1
+#        training_data[q*data_pts + i, 1] = g_vals[i]
         #print(new_hamiltonian.ground_state)
+        
+for i in range(len(g_vals)):
+    new_hamiltonian = sim.Hamiltonian(q_bits, g_vals[i])
+    exp_min_energy = new_hamiltonian.exp_ground
+    E0.append(exp_min_energy)
+    training_data[i, 1] = g_vals[i]
+
+training_data[:, 0] = q_bits
         
 #training_data[:data_pts, 0] = 1
 #training_data[data_pts:2*data_pts, 0] = 2
@@ -62,15 +73,42 @@ for q in range(q_bits):
 #%% Testing out sklearn lasso
 
 clf = linear_model.Lasso()
-clf.fit(training_data, E0)
+clf.fit(training_data, np.real(E0))
 #print(clf.predict())
 
-#%% Min. positive val test
+#%% Check errors
+# predict for a random data point
+random_data = np.zeros((1,2))
+qubits_rand = q_bits#np.random.randint(1, q_bits)
+g_rand = (np.random.rand() - 1)*4
+random_data[:,0] = qubits_rand
+random_data[:,1] = g_rand
+test_ham = sim.Hamiltonian(qubits_rand, g_rand)
+print('Parameters for test_g within training data range (of +/- 2)')
+print('Qubits: '+str(qubits_rand))
+print('Couping Coeff (g): '+str(g_rand))
+print('No. Training Data points: '+str(data_pts))
+print()
 
-#arr = np.array([3, -1, 5, 0, 2])
-#mask = arr > 0
-#values_greater_than_zero = arr[mask]
-#index = np.argmin(values_greater_than_zero)
-#index_of_minimum = np.nonzero(mask)[0][index]
-#print(index)
-#print(index_of_minimum)
+E0_pred = clf.predict(random_data)[0]
+print('Predicted E0: ' + str(E0_pred))
+E0_check = test_ham.exp_ground
+print('Expected E0: ' + str(E0_check))
+E0_diff = E0_pred - E0_check
+E0_err = np.abs(E0_pred - E0_check) / np.abs(E0_pred)
+print('E0 Error: ' + str(E0_err))
+
+#%% appending to lists
+
+errors_lst.append(E0_err)
+pts_lst.append(data_pts)
+
+#%%
+
+plt.figure()
+plt.semilogx(pts_lst, errors_lst)
+plt.xlabel('Training Data Points')
+plt.ylabel('% Error')
+plt.title('Qubits: '+str(q_bits)+', within g-range -2 to 2')
+
+
