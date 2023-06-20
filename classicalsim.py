@@ -23,10 +23,8 @@ class Hamiltonian:
         if form =='ising1d':
             self.hamiltonian = self.ising_hamiltonian()
         self.ground_state = self.find_ground_state()
-        self.exp_ground = np.matmul(self.ground_state.conj().T, 
-                                    np.matmul(self.hamiltonian, 
-                                              self.ground_state)
-                                    )
+        self.exp_ground = self.compute_observable(self.ground_state, 
+                                                  self.hamiltonian)
         
     def ising_hamiltonian(self):
         Z_term = 0
@@ -71,13 +69,31 @@ class Hamiltonian:
     
     def find_ground_state(self):
         vals, vecs = np.linalg.eig(self.hamiltonian)
-        lowest_ind = np.where(vals == vals.min())
+        lowest_ind = np.where(vals == vals.min())[0]
         #mask = vals > 0
         #pos_vals = vals[mask]
         #min_pos_val = np.argmin(pos_vals)
         #lowest_ind = np.nonzero(mask)[0][min_pos_val]
-        min_energy_state = vecs[:,lowest_ind].flatten()
+        min_energy_state = vecs[lowest_ind,:]#.flatten()
+        print(min_energy_state.shape)
         return min_energy_state
+    
+    def compute_observable(self, state, operator):
+        if state.ndim == 1:
+            return np.matmul(state.conj().T, 
+                             np.matmul(operator, 
+                                       state)
+                             )
+        elif state.ndim == 2:
+            trace = 0
+            no_states = state.shape[0]
+            operator_on_state = np.dot(operator, state.T).T
+            inner_prod = np.diag(np.dot(operator_on_state, state.conj().T))
+            trace = np.sum(inner_prod) / no_states
+            return trace
+                
+        else:
+            raise ValueError('state input must be a 1d array, or a 2d array of 1d arrays')
         
 
 class State:

@@ -27,7 +27,7 @@ pts_lst = []
 # Two qubits first
 data_pts = int(1e2)
 g_vals = np.linspace(-2, 2, data_pts)
-q_bits = 10
+q_bits = 4
 E0 = []
 training_data = np.zeros((data_pts, 2))
 
@@ -62,11 +62,11 @@ training_data[:, 0] = q_bits
 #training_data[3*data_pts:4*data_pts, 1] = g_vals
 #training_data[4*data_pts:, 1] = g_vals
 
-#plt.figure()
-#plt.plot(g_vals, E0)
-#plt.xlabel('Field Coupling Coefficient, g')
-#plt.ylabel(r'$\langle \psi_0\vert\hat H\vert\psi_0\rangle$')
-#plt.title(r'1D Ising $\hat{H}$ for ' + str(q_bits) + ' qubits')
+plt.figure()
+plt.plot(g_vals, E0)
+plt.xlabel('Field Coupling Coefficient, g')
+plt.ylabel(r'$\langle \psi_0\vert\hat H\vert\psi_0\rangle$')
+plt.title(r'1D Ising $\hat{H}$ for ' + str(q_bits) + ' qubits')
 
 #training_data = np.vstack((g_vals, E0)).T
 
