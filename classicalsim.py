@@ -75,7 +75,7 @@ class Hamiltonian:
         #min_pos_val = np.argmin(pos_vals)
         #lowest_ind = np.nonzero(mask)[0][min_pos_val]
         min_energy_state = vecs[lowest_ind,:]#.flatten()
-        print(min_energy_state.shape)
+        #print(min_energy_state.ndim)
         return min_energy_state
     
     def compute_observable(self, state, operator):
@@ -85,11 +85,18 @@ class Hamiltonian:
                                        state)
                              )
         elif state.ndim == 2:
-            trace = 0
+            # not sure this is quite working, unsure
             no_states = state.shape[0]
+            #inner = 0
             operator_on_state = np.dot(operator, state.T).T
-            inner_prod = np.diag(np.dot(operator_on_state, state.conj().T))
+            inner_prod = np.diag(np.dot(operator_on_state, state.T))
             trace = np.sum(inner_prod) / no_states
+            #for i in range(no_states):
+            #    inner += np.matmul(state[i].conj().T, 
+            #                     np.matmul(operator, 
+            #                               state[i])
+            #                     )
+            #trace = inner / no_states
             return trace
                 
         else:
