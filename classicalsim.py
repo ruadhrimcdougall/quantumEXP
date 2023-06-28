@@ -116,12 +116,18 @@ class Hamiltonian:
     
     def find_ground_state(self):
         '''
+        Ground state of the hamiltonian is defined as the state(s) with the lowest
+        eigenvalue.
+        
+        This finds the lowest eigenvalue and the corresponding state(s)
         
 
         Returns
         -------
-        min_energy_state : TYPE
-            DESCRIPTION.
+        min_energy_state : TYPE np.ndarray
+            DESCRIPTION. A 1d array defining the ground state, or 2d for the 
+                         case of degenerate ground states, interpreted as a list
+                         of the 1d states.
 
         '''
         vals, vecs = np.linalg.eig(self.hamiltonian)
@@ -151,7 +157,7 @@ class Hamiltonian:
         ----------
         state : TYPE np.ndarray
             DESCRIPTION. If one degenerate state, this is a 1d array. If multiple
-                         degenerate states this this is a 2d array, interpretted
+                         degenerate states this this is a 2d array, interpreted
                          as a list of the 1d array states.
         operator : TYPE np.ndarray
             DESCRIPTION. a
@@ -192,7 +198,9 @@ class Hamiltonian:
         
 
 class State:
-    
+    '''
+    A class for quantum states. (will probably delete)
+    '''
     def __init__(self):
         self.__up = np.array([1, 0])
         self.__down = np.array([0, 1])
