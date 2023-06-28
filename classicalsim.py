@@ -18,6 +18,23 @@ down = np.array([0, 1])
 class Hamiltonian:
     
     def __init__(self, qubits, x, form='ising1d'):
+        '''
+        
+
+        Parameters
+        ----------
+        qubits : TYPE
+            DESCRIPTION.
+        x : TYPE
+            DESCRIPTION.
+        form : TYPE, optional
+            DESCRIPTION. The default is 'ising1d'.
+
+        Returns
+        -------
+        None.
+
+        '''
         self.__qubits = qubits
         self.__x = x
         if form =='ising1d':
@@ -27,6 +44,15 @@ class Hamiltonian:
                                                   self.hamiltonian)
         
     def ising_hamiltonian(self):
+        '''
+        
+
+        Returns
+        -------
+        total_hamiltonian : TYPE
+            DESCRIPTION.
+
+        '''
         Z_term = 0
         X_term = 0
         new_Z = self.pauli_Zi(0)
@@ -55,6 +81,27 @@ class Hamiltonian:
         return X
     
     def pauli_Zi(self, i):
+        '''
+        
+
+        Parameters
+        ----------
+        i : TYPE
+            DESCRIPTION.
+
+        Raises
+        ------
+        ValueError
+            DESCRIPTION.
+        TypeError
+            DESCRIPTION.
+
+        Returns
+        -------
+        Z : TYPE
+            DESCRIPTION.
+
+        '''
         if i<0 or i>=self.__qubits:
             raise ValueError('i must take integer values between 0 (for the first qubit) up to qubits-1')
         elif isinstance(i, int) == 0:
@@ -68,6 +115,15 @@ class Hamiltonian:
         return Z
     
     def find_ground_state(self):
+        '''
+        
+
+        Returns
+        -------
+        min_energy_state : TYPE
+            DESCRIPTION.
+
+        '''
         vals, vecs = np.linalg.eig(self.hamiltonian)
         lowest_ind = np.where(vals == vals.min())[0]
         #mask = vals > 0
@@ -79,6 +135,38 @@ class Hamiltonian:
         return min_energy_state
     
     def compute_observable(self, state, operator):
+        '''
+        Computes the expected observable for a given state and operator.
+        
+        Expected value is given by the inner product <state|operator|state>
+        (or s - state and O - operator)
+        
+        Can be shown that this is equivalent to Tr(sO), which is the same as
+        the sum over the inner products of each of the degenerate eigenstates 
+        with the operator, divided by the number of degenerate states.
+        
+        Tr(sO) = (1/N) x (<s_1|O|s_1> + ... + <s_N|O|s_N>)
+
+        Parameters
+        ----------
+        state : TYPE np.ndarray
+            DESCRIPTION. If one degenerate state, this is a 1d array. If multiple
+                         degenerate states this this is a 2d array, interpretted
+                         as a list of the 1d array states.
+        operator : TYPE np.ndarray
+            DESCRIPTION. a
+
+        Raises
+        ------
+        ValueError
+            DESCRIPTION. Error raised if state is not a 1d or 2d numpy array
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION. a constant float for the expected observable
+
+        '''
         if state.ndim == 1:
             return np.matmul(state.conj().T, 
                              np.matmul(operator, 
@@ -89,7 +177,7 @@ class Hamiltonian:
             no_states = state.shape[0]
             #inner = 0
             operator_on_state = np.dot(operator, state.T).T
-            inner_prod = np.diag(np.dot(operator_on_state, state.T))
+            inner_prod = np.diag(np.dot(operator_on_state, state.conj().T))
             trace = np.sum(inner_prod) / no_states
             #for i in range(no_states):
             #    inner += np.matmul(state[i].conj().T, 
