@@ -17,17 +17,21 @@ down = np.array([0, 1])
 
 class Hamiltonian:
     
-    def __init__(self, qubits, x, form='ising1d'):
+    def __init__(self, qubits, g, form='ising1d'):
         '''
         
-
+        A classical model for the quantum hamiltonian
+        
+        Current functionality models the 1d quantum ising model to describe
+        a chain of near-neighbour interactions.
+        
         Parameters
         ----------
-        qubits : TYPE
+        qubits : TYPE int
+            DESCRIPTION. The number of 
+        g : TYPE
             DESCRIPTION.
-        x : TYPE
-            DESCRIPTION.
-        form : TYPE, optional
+        form : TYPE string, optional
             DESCRIPTION. The default is 'ising1d'.
 
         Returns
@@ -35,22 +39,43 @@ class Hamiltonian:
         None.
 
         '''
-        self.__qubits = qubits
-        self.__x = x
+        if isinstance(qubits, int):
+            self.__qubits = qubits
+        else:
+            raise TypeError('"qubits" field must be an integer')
+        self.__g = g
         if form =='ising1d':
             self.hamiltonian = self.ising_hamiltonian()
+        else:
+            raise ValueError('The string "ising1d" is currently the only allowed value for "form" field')
         self.ground_state = self.find_ground_state()
         self.exp_ground = self.compute_observable(self.ground_state, 
                                                   self.hamiltonian)
         
     def ising_hamiltonian(self):
         '''
+        Determines the matrix form of the 1d ising hamiltonian for "n" qubits
         
+        Modeled using fixed boundary conditions (i.e. non-periodic);
+        
+        --------------------------------------------------------------------
+        |              --- n-2                  --- n-1                    |
+        |          H =  >      Z_i . Z_i+1  +    >      g . X_i            |
+        |              --- i=0                  --- i=0                    |
+        --------------------------------------------------------------------
+
+        such that for the case of two qubits in the chain (n=2), we get,
+        
+                        H = Z_0 . Z_1 + g . (X_0 + X1)
+        
+        where "i" indicates the position of the qubit in the chain, "Z_i, X_i"
+        are the respective pauli spin matrices, and "g" is the magnetic field
+        coupling coefficient.
 
         Returns
         -------
-        total_hamiltonian : TYPE
-            DESCRIPTION.
+        total_hamiltonian : TYPE np.ndarray
+            DESCRIPTION. Matrix form of the 1d ising hamiltonian (2d numpy array)
 
         '''
         Z_term = 0
@@ -64,7 +89,7 @@ class Hamiltonian:
                 new_Z = self.pauli_Zi(i+1)
             Z_term += np.matmul(Z_i, new_Z)
             X_term += self.pauli_Xi(i)
-        total_hamiltonian = Z_term + self.__x * X_term
+        total_hamiltonian = Z_term + self.__g * X_term
         return total_hamiltonian
         
     def pauli_Xi(self, i):
@@ -83,7 +108,6 @@ class Hamiltonian:
     def pauli_Zi(self, i):
         '''
         
-
         Parameters
         ----------
         i : TYPE
