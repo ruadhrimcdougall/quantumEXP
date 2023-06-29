@@ -8,8 +8,11 @@ Created on Wed Jun  7 10:34:00 2023
 
 import numpy as np
 
+# pauli spin matrix definitions
 pauli_X = np.array([[0, 1], [1, 0]])
 pauli_Z = np.array([[1, 0], [0, -1]])
+
+# spin up (+1) and spin down (-1) definitions
 up = np.array([1, 0])
 down = np.array([0, 1])
 
@@ -28,7 +31,7 @@ class Hamiltonian:
         Parameters
         ----------
         qubits : TYPE int
-            DESCRIPTION. The number of 
+            DESCRIPTION. The number of qubits in the monatomic chain
         g : TYPE
             DESCRIPTION.
         form : TYPE string, optional
@@ -93,50 +96,80 @@ class Hamiltonian:
         return total_hamiltonian
         
     def pauli_Xi(self, i):
-        if i<0 or i>=self.__qubits:
-            raise ValueError('i must take integer values between 0 (for the first qubit) up to qubits-1')
-        elif isinstance(i, int) == 0:
-            raise TypeError('i must be an integer')
-        X = 1
-        for q in range(self.__qubits):
-            if q == i:
-                X = np.kron(X, pauli_X)
-            else:
-                X = np.kron(X, np.identity(2))
-        return X
-    
-    def pauli_Zi(self, i):
         '''
-        
+        The pauli Z matix for the qubit at position i in the 1d sing chain
+
         Parameters
         ----------
-        i : TYPE
-            DESCRIPTION.
+        i : TYPE int
+            DESCRIPTION. The qubit position, can only take values from 0 to n-1,
+                         where n is the number of qubits. (up to n-1 for the X
+                         matrix - see ising_hamiltonian docstring)
 
         Raises
         ------
         ValueError
-            DESCRIPTION.
+            DESCRIPTION. Error if i is outside of the 0 to n-1 range
         TypeError
-            DESCRIPTION.
+            DESCRIPTION. Error if i is not an integer
 
         Returns
         -------
-        Z : TYPE
-            DESCRIPTION.
+        X : TYPE np.ndarray
+            DESCRIPTION. The pauli spin X matrix for a given qubit position 
+                         (2d array)
 
         '''
         if i<0 or i>=self.__qubits:
-            raise ValueError('i must take integer values between 0 (for the first qubit) up to qubits-1')
-        elif isinstance(i, int) == 0:
+            raise ValueError('i must take integer values between 0 (for the first qubit) up to n-1')
+        elif isinstance(i, int):
+            X = 1
+            for q in range(self.__qubits):
+                if q == i:
+                    X = np.kron(X, pauli_X)
+                else:
+                    X = np.kron(X, np.identity(2))
+            return X
+        else:
             raise TypeError('i must be an integer')
-        Z = 1
-        for q in range(self.__qubits):
-            if q == i:
-                Z = np.kron(Z, pauli_Z)
-            else:
-                Z = np.kron(Z, np.identity(2))
-        return Z
+    
+    def pauli_Zi(self, i):
+        '''
+        The pauli Z matix for the qubit at position i in the 1d sing chain
+        
+        Parameters
+        ----------
+        i : TYPE int
+            DESCRIPTION. The qubit position, can only take values from 0 to n-2,
+                         where n is the number of qubits. (up to n-2 for the Z
+                         matrix - see ising_hamiltonian docstring)
+
+        Raises
+        ------
+        ValueError
+            DESCRIPTION. Error if i is outside of the 0 to n-2 range
+        TypeError
+            DESCRIPTION. Error if i is not an integer
+
+        Returns
+        -------
+        Z : TYPE np.ndarray
+            DESCRIPTION. The pauli Z spin matrix for a given qubit position
+                         (2d array)
+
+        '''
+        if i<0 or i>=self.__qubits-1:
+            raise ValueError('i must take integer values between 0 (for the first qubit) up to n-2')
+        elif isinstance(i, int):
+            Z = 1
+            for q in range(self.__qubits):
+                if q == i:
+                    Z = np.kron(Z, pauli_Z)
+                else:
+                    Z = np.kron(Z, np.identity(2))
+            return Z
+        else:
+            raise TypeError('i must be an integer')
     
     def find_ground_state(self):
         '''
@@ -216,9 +249,8 @@ class Hamiltonian:
             #                     )
             #trace = inner / no_states
             return trace
-                
         else:
-            raise ValueError('state input must be a 1d array, or a 2d array of 1d arrays')
+            raise ValueError('state input must be a 1d array, or a 2d array interpretted as a list of 1d state arrays')
         
 
 class State:
