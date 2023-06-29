@@ -185,6 +185,9 @@ class Hamiltonian:
             DESCRIPTION. A 1d array defining the ground state, or 2d for the 
                          case of degenerate ground states, interpreted as a list
                          of the 1d states.
+                         
+                         i.e. has shape (n_degstates, 2^{qubits}) where
+                         n_degstates is the number of degenerate eigenstates
 
         '''
         vals, vecs = np.linalg.eig(self.hamiltonian)
