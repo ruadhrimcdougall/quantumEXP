@@ -188,6 +188,14 @@ class Hamiltonian:
                          
                          i.e. has shape (n_degstates, 2^{qubits}) where
                          n_degstates is the number of degenerate eigenstates
+                         
+                         ***EDIT -  this always returns a 2d array irrespective
+                                    of degeneracy. i.e for two qubits and a 
+                                    single ground state the min_energy_state
+                                    shape is (1, 4) and for two it is (2, 4).
+                                    
+                                    Added .flatten() in 'if' statement to give
+                                    same output in docstring above
 
         '''
         vals, vecs = np.linalg.eig(self.hamiltonian)
@@ -197,7 +205,16 @@ class Hamiltonian:
         #min_pos_val = np.argmin(pos_vals)
         #lowest_ind = np.nonzero(mask)[0][min_pos_val]
         min_energy_state = vecs[lowest_ind,:]#.flatten()
+        # Including this 'if' statement has no effect on results, but gives a
+        # slight speed-up
+        if min_energy_state.shape[0] == 1:
+            min_energy_state = min_energy_state.flatten()
+        #else:
+        #    return min_energy_state
         #print(min_energy_state.ndim)
+        #print(min_energy_state.shape)
+        #print(lowest_ind)
+        #print(min_energy_state)
         return min_energy_state
     
     def compute_observable(self, state, operator):
@@ -219,6 +236,9 @@ class Hamiltonian:
             DESCRIPTION. If one degenerate state, this is a 1d array. If multiple
                          degenerate states this this is a 2d array, interpreted
                          as a list of the 1d array states.
+                         
+                         Has shape (n_degstates, 2^{qubits})
+                         
         operator : TYPE np.ndarray
             DESCRIPTION. a
 
@@ -233,6 +253,8 @@ class Hamiltonian:
             DESCRIPTION. a constant float for the expected observable
 
         '''
+        # Note that an ndim of 1 or 2 checked to give exact same output data
+        # By flattening the single ground state to a 1d array and using the 'if' statement below gives a slight speedup
         if state.ndim == 1:
             return np.matmul(state.conj().T, 
                              np.matmul(operator, 

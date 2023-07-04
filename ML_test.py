@@ -8,6 +8,7 @@ Created on Tue Jun 13 16:47:07 2023
 
 import classicalsim as sim
 import numpy as np
+import time
 from sklearn import linear_model
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -27,9 +28,10 @@ pts_lst = []
 # Two qubits first
 data_pts = int(1e3 + 1)
 g_vals = np.linspace(-2, 2, data_pts)
-q_bits = 6
+q_bits = 7
 E0 = []
 training_data = np.zeros((data_pts, 2))
+#print(training_data.shape[0])
 
 #for q in range(q_bits):
     #training_data[:(data_pts*(q+1)-1), 0] = q+1
@@ -42,7 +44,7 @@ training_data = np.zeros((data_pts, 2))
 #        training_data[q*data_pts + i, 0] = q+1
 #        training_data[q*data_pts + i, 1] = g_vals[i]
         #print(new_hamiltonian.ground_state)
-        
+start = time.time()
 for i in range(len(g_vals)):
     new_hamiltonian = sim.Hamiltonian(q_bits, g_vals[i])
     exp_min_energy = new_hamiltonian.exp_ground
@@ -50,6 +52,9 @@ for i in range(len(g_vals)):
     training_data[i, 1] = g_vals[i]
     if g_vals[i] == 0:
         print(exp_min_energy)
+end = time.time()
+print('runtime')
+print(end-start)
 
 training_data[:, 0] = q_bits
         
