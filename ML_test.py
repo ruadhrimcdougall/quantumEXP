@@ -25,9 +25,9 @@ pts_lst = []
 # state energy as a function of this variable
 
 # Two qubits first
-data_pts = int(1e3)
+data_pts = int(1e3 + 1)
 g_vals = np.linspace(-2, 2, data_pts)
-q_bits = 3
+q_bits = 6
 E0 = []
 training_data = np.zeros((data_pts, 2))
 
@@ -48,6 +48,8 @@ for i in range(len(g_vals)):
     exp_min_energy = new_hamiltonian.exp_ground
     E0.append(exp_min_energy)
     training_data[i, 1] = g_vals[i]
+    if g_vals[i] == 0:
+        print(exp_min_energy)
 
 training_data[:, 0] = q_bits
         

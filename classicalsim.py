@@ -86,7 +86,7 @@ class Hamiltonian:
         new_Z = self.pauli_Zi(0)
         for i in range(self.__qubits):
             Z_i = new_Z
-            if self.__qubits == i+1:
+            if i == self.__qubits-1:
                 new_Z = np.zeros(new_Z.shape)
             else:
                 new_Z = self.pauli_Zi(i+1)
@@ -158,8 +158,8 @@ class Hamiltonian:
                          (2d array)
 
         '''
-        if i<0 or i>=self.__qubits-1:
-            raise ValueError('i must take integer values between 0 (for the first qubit) up to n-2')
+        if i<0 or i>=self.__qubits:
+            raise ValueError('i must take integer values between 0 (for the first qubit) up to n-1')
         elif isinstance(i, int):
             Z = 1
             for q in range(self.__qubits):
