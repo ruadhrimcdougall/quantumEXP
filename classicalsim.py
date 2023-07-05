@@ -176,7 +176,8 @@ class Hamiltonian:
         Ground state of the hamiltonian is defined as the state(s) with the lowest
         eigenvalue.
         
-        This finds the lowest eigenvalue and the corresponding state(s)
+        This finds the lowest eigenvalue and the corresponding state(s) for a
+        complex hermitian matrix using the np.linalg.eigh function
         
 
         Returns
@@ -198,24 +199,14 @@ class Hamiltonian:
                                     same output in docstring above
 
         '''
-        vals, vecs = np.linalg.eig(self.hamiltonian)
+        vals, vecs = np.linalg.eigh(self.hamiltonian)
         lowest_ind = np.where(vals == vals.min())[0]
-        #mask = vals > 0
-        #pos_vals = vals[mask]
-        #min_pos_val = np.argmin(pos_vals)
-        #lowest_ind = np.nonzero(mask)[0][min_pos_val]
-        min_energy_state = vecs[lowest_ind,:]#.flatten()
-        # Including this 'if' statement has no effect on results, but gives a
-        # slight speed-up
+        min_energy_state = vecs[:, lowest_ind].T
+        # Including this 'if' statement has no effect on results, but gives a slight speed-up
         if min_energy_state.shape[0] == 1:
-            min_energy_state = min_energy_state.flatten()
-        #else:
-        #    return min_energy_state
-        #print(min_energy_state.ndim)
-        #print(min_energy_state.shape)
-        #print(lowest_ind)
-        #print(min_energy_state)
-        return min_energy_state
+            return min_energy_state.flatten()
+        else:
+            return min_energy_state
     
     def compute_observable(self, state, operator):
         '''
@@ -261,18 +252,10 @@ class Hamiltonian:
                                        state)
                              )
         elif state.ndim == 2:
-            # not sure this is quite working, unsure
             no_states = state.shape[0]
-            #inner = 0
             operator_on_state = np.dot(operator, state.T).T
             inner_prod = np.diag(np.dot(operator_on_state, state.conj().T))
             trace = np.sum(inner_prod) / no_states
-            #for i in range(no_states):
-            #    inner += np.matmul(state[i].conj().T, 
-            #                     np.matmul(operator, 
-            #                               state[i])
-            #                     )
-            #trace = inner / no_states
             return trace
         else:
             raise ValueError('state input must be a 1d array, or a 2d array interpretted as a list of 1d state arrays')

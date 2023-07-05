@@ -26,9 +26,9 @@ pts_lst = []
 # state energy as a function of this variable
 
 # Two qubits first
-data_pts = int(1e3 + 1)
+data_pts = int(1e2 + 1)
 g_vals = np.linspace(-2, 2, data_pts)
-q_bits = 7
+q_bits = 2
 E0 = []
 training_data = np.zeros((data_pts, 2))
 #print(training_data.shape[0])
