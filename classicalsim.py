@@ -79,7 +79,6 @@ class Hamiltonian:
         -------
         total_hamiltonian : TYPE np.ndarray
             DESCRIPTION. Matrix form of the 1d ising hamiltonian (2d numpy array)
-
         '''
         Z_term = 0
         X_term = 0
@@ -103,8 +102,7 @@ class Hamiltonian:
         ----------
         i : TYPE int
             DESCRIPTION. The qubit position, can only take values from 0 to n-1,
-                         where n is the number of qubits. (up to n-1 for the X
-                         matrix - see ising_hamiltonian docstring)
+                         where n is the number of qubits.
 
         Raises
         ------
@@ -118,7 +116,6 @@ class Hamiltonian:
         X : TYPE np.ndarray
             DESCRIPTION. The pauli spin X matrix for a given qubit position 
                          (2d array)
-
         '''
         if i<0 or i>=self.__qubits:
             raise ValueError('i must take integer values between 0 (for the first qubit) up to n-1')
@@ -140,14 +137,13 @@ class Hamiltonian:
         Parameters
         ----------
         i : TYPE int
-            DESCRIPTION. The qubit position, can only take values from 0 to n-2,
-                         where n is the number of qubits. (up to n-2 for the Z
-                         matrix - see ising_hamiltonian docstring)
+            DESCRIPTION. The qubit position, can only take values from 0 to n-1,
+                         where n is the number of qubits.
 
         Raises
         ------
         ValueError
-            DESCRIPTION. Error if i is outside of the 0 to n-2 range
+            DESCRIPTION. Error if i is outside of the 0 to n-1 range
         TypeError
             DESCRIPTION. Error if i is not an integer
 
@@ -156,7 +152,6 @@ class Hamiltonian:
         Z : TYPE np.ndarray
             DESCRIPTION. The pauli Z spin matrix for a given qubit position
                          (2d array)
-
         '''
         if i<0 or i>=self.__qubits:
             raise ValueError('i must take integer values between 0 (for the first qubit) up to n-1')
@@ -178,7 +173,6 @@ class Hamiltonian:
         
         This finds the lowest eigenvalue and the corresponding state(s) for a
         complex hermitian matrix using the np.linalg.eigh function
-        
 
         Returns
         -------
@@ -190,19 +184,16 @@ class Hamiltonian:
                          i.e. has shape (n_degstates, 2^{qubits}) where
                          n_degstates is the number of degenerate eigenstates
                          
-                         ***EDIT -  this always returns a 2d array irrespective
-                                    of degeneracy. i.e for two qubits and a 
-                                    single ground state the min_energy_state
-                                    shape is (1, 4) and for two it is (2, 4).
+                         e.g. for two qubits and a single ground state the 
+                         min_energy_state shape is (4) and for two it is (2, 4).
                                     
-                                    Added .flatten() in 'if' statement to give
-                                    same output in docstring above
-
+                         Added .flatten() in 'if' statement to give output 
+                         described above for single ground state (has no effect 
+                         on results, but gives a slight speed-up)
         '''
         vals, vecs = np.linalg.eigh(self.hamiltonian)
         lowest_ind = np.where(vals == vals.min())[0]
         min_energy_state = vecs[:, lowest_ind].T
-        # Including this 'if' statement has no effect on results, but gives a slight speed-up
         if min_energy_state.shape[0] == 1:
             return min_energy_state.flatten()
         else:
@@ -230,8 +221,12 @@ class Hamiltonian:
                          
                          Has shape (n_degstates, 2^{qubits})
                          
+                         (For the case of one ground state, input shapes (2^{qubits}) 
+                          and (1, 2^{qubits}) give identical results)
+                         
         operator : TYPE np.ndarray
-            DESCRIPTION. a
+            DESCRIPTION. The operator for which the observable is computed for.
+                         (e.g. hamiltonian to compute energy)
 
         Raises
         ------
