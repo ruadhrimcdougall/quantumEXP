@@ -6,8 +6,8 @@ Created on Thu Jul  6 14:16:20 2023
 @author: Ruadhri McDougall
 """
 
-Welcome quantumEXP, a library to classically simulate quantum experiments, and 
-use a machine learning model to make predictive estimates about such systems. 
+Welcome quantumEXP, a library for the classical simulation of quantum experiments, 
+and use a machine learning models to make predictive estimates about such systems. 
 
 A UROP project with i-X, supervised by Roberto Bondesan.
 
