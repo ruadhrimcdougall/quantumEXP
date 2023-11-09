@@ -51,10 +51,8 @@ rbf_feature_map = RBFSampler(gamma=1, random_state=42)
 # Create a pipeline that will create random fourier features, and then apply LASSO
 lasso = Lasso(alpha=0.001)
 lasso_pipe = make_pipeline(rbf_feature_map, lasso)
-
 # train model
 lasso_pipe.fit(X_train, y_train)
-
 
 #%% Make Predictions
 
@@ -64,5 +62,4 @@ print(lasso_pipe.score(X_test, y_test))
 pred_y = lasso_pipe.predict(X_test)
 # plot test data
 plt.scatter(X_test, pred_y, marker='x')
-
 plt.savefig('testplot')
