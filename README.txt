@@ -47,3 +47,17 @@ Here are all the relevant files for the project.
         when there is no magnetic field i.e. g=0.and
         
         (Not particularly relevant, included for record of testing).
+
+5) ML_model.py
+
+        This is the actual model implementation, where the structure is as follows,
+                
+                a) Generate training data (initially done with a 3 qubit chain)
+                b) Transform the training data to obtain a feature map phi(x)
+                        i) Initially this will be done with a random fourier
+                           series, with a view to move to using either a neural
+                           network or bayesian learning
+                c) Use LASSO regression to learn the model weights, w, using the
+                   transformed features phi(x)
+                d) Apply the same random fourier feature map to new input data
+                   and make predictions using the learned weights, w.
